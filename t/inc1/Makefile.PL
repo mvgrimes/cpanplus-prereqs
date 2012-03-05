@@ -8,6 +8,7 @@ all_from        'lib/CSDPR_Test.pm';
 # Specific dependencies
 requires        'File::Spec'        => '0.80';
 requires        'stuff'             => '0.80';
+requires        'Hash::Util'        => 0;
 build_requires  'Test::More'        => '0.42';
 
 # auto_install;
