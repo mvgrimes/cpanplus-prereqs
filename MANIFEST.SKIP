@@ -1,0 +1,16 @@
+\.releaserc
+_build
+Build$
+Makefile$
+^blib
+~$
+\.bak$
+\.svn/
+^MANIFEST\.SKIP$
+^Prereqs\.pm$
+^Test\.pm$
+^TODO$
+
+
+^MYMETA\.yml$
+^MYMETA\.json$
