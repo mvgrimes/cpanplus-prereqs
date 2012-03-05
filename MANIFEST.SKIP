@@ -1,4 +1,3 @@
-\.releaserc
 _build
 Build$
 Makefile$
@@ -6,11 +5,22 @@ Makefile$
 ~$
 \.bak$
 \.svn/
+\.git/
+\.gitignore$
 ^MANIFEST\.SKIP$
 ^Prereqs\.pm$
 ^Test\.pm$
 ^TODO$
 
-
 ^MYMETA\.yml$
 ^MYMETA\.json$
+
+^t/build1/Build$
+^t/build1/_build/
+^t/inc1/META.yml
+^t/inc1/MYMETA.json
+^t/inc1/MYMETA.yml
+^t/inc1/Makefile$
+^t/mm1/MYMETA.json
+^t/mm1/MYMETA.yml
+^t/mm1/Makefile$
