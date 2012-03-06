@@ -22,7 +22,7 @@ use CPANPLUS::Internals::Constants;
 use Carp;
 use Data::Dumper;
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 sub plugins { return (
             prereqs => 'install_prereqs',
