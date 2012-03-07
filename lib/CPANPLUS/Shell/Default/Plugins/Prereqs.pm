@@ -1,19 +1,5 @@
 package CPANPLUS::Shell::Default::Plugins::Prereqs;
 
-###########################################################################
-# CPANPLUS::Shell::Default::Plugin::Prereqs
-# Mark Grimes
-#
-# This is a CPANPLUS::Shell::Default plugin that will parse the Build.PL or
-# Makefile.PL file in the current directory or in a distribution and install
-# all the prerequisites.
-#
-# Copyright (c) 2007 Mark Grimes (mgrimes@cpan.org).
-# All rights reserved. This program is free software; you can redistribute
-# it and/or modify it under the same terms as Perl itself.
-#
-###########################################################################
-
 use strict;
 use warnings;
 use File::Basename qw[basename];
@@ -22,114 +8,113 @@ use CPANPLUS::Internals::Constants;
 use Carp;
 use Data::Dumper;
 
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 
-sub plugins { return (
-            prereqs => 'install_prereqs',
-        ); }
+sub plugins {
+    return ( prereqs => 'install_prereqs', );
+}
 
 sub install_prereqs {
-    my $class   = shift;        # CPANPLUS::Shell::Default::Plugins::Prereqs
-    my $shell   = shift;        # CPANPLUS::Shell::Default object
-    my $cb      = shift;        # CPANPLUS::Backend object
-    my $cmd     = shift;        # 'prereqs'
-    my $input   = shift;        # show|list|install [dirname]
-    my $opts    = shift || {};  # { foo => 0, bar => 2 }
+    my $class = shift;          # CPANPLUS::Shell::Default::Plugins::Prereqs
+    my $shell = shift;          # CPANPLUS::Shell::Default object
+    my $cb    = shift;          # CPANPLUS::Backend object
+    my $cmd   = shift;          # 'prereqs'
+    my $input = shift;          # show|list|install [dirname]
+    my $opts  = shift || {};    # { foo => 0, bar => 2 }
 
-    ### get the operation and possble target dir.
-    my( $op, $dir ) = split /\s+/, $input, 2;           ## no critic
+    # get the operation and possble target dir.
+    my ( $op, $dir ) = split /\s+/, $input, 2;    ## no critic
 
-    ### default to the current dir
+    # default to the current dir
     $dir ||= '.';
 
-    ### you want us to install, or just list?
-    my $install     = {
+    # you want us to install, or just list?
+    my $install = {
         list    => 0,
         show    => 0,
         install => 1,
     }->{ lc $op };
-    
-    ### you passed an unknown operation
-    unless( defined $install ) {
+
+    # you passed an unknown operation
+    unless ( defined $install ) {
         print __PACKAGE__->install_prereqs_help;
         return;
-    }        
+    }
 
     my $mod;
 
-    ### was a directory specified
-    if( -d $dir ){
+    # was a directory specified
+    if ( -d $dir ) {
 
-        ### get the absolute path to the directory
-        $dir    = File::Spec->rel2abs( $dir );
-        
+        # get the absolute path to the directory
+        $dir = File::Spec->rel2abs($dir);
+
         $mod = CPANPLUS::Module::Fake->new(
-                    module  => basename( $dir ),
-                    path    => $dir,
-                    author  => CPANPLUS::Module::Author::Fake->new,
-                    package => basename( $dir ),
-                );
+            module  => basename($dir),
+            path    => $dir,
+            author  => CPANPLUS::Module::Author::Fake->new,
+            package => basename($dir),
+        );
 
-        ### set the fetch & extract targets, so we know where to look
-        $mod->status->fetch(   $dir );
-        $mod->status->extract( $dir );
+        # set the fetch & extract targets, so we know where to look
+        $mod->status->fetch($dir);
+        $mod->status->extract($dir);
 
-        ### figure out whether this module uses EU::MM or Module::Build
-        ### do this manually, as we're setting the extract location ourselves.
+        # figure out whether this module uses EU::MM or Module::Build
+        # do this manually, as we're setting the extract location
+        # ourselves.
         $mod->get_installer_type or return;
 
     } else {
 
-        ### get the module per normal
+        # get the module per normal
         $mod = $cb->parse_module( module => $dir )
-            or return;
+          or return;
 
     }
 
-    ### run 'perl Makefile.PL' or 'M::B->new_from_context' to find the prereqs.
-    $mod->prepare( %$opts ) or return;
+    # run 'perl Makefile.PL' or 'M::B->new_from_context' to find the
+    # prereqs.
+    $mod->prepare(%$opts) or return;
 
-    ### get the list of prereqs
+    # get the list of prereqs
     my $href = $mod->status->prereqs or return;
 
-    ### print repreq header
-    printf "\n  %-30s %10s %10s %10s %10s\n", 
-        'Module', 'Req Ver', 'Installed', 'CPAN', 'Satisfied'
-        if keys %$href;
- 
-    ### list and/or install the prereqs
-    while( my($name, $version) = each %$href ) {
-    
-        ### find the module or display msg no such module
-        my $obj = $cb->module_tree( $name ) or 
-            print "Prerequisite '$name' was not found on CPAN\n" and
-            next;
+    # print repreq header
+    printf "\n  %-30s %10s %10s %10s %10s\n",
+      'Module', 'Req Ver', 'Installed', 'CPAN', 'Satisfied'
+      if keys %$href;
 
-        ### display some info
-        printf "  %-30s %10s %10s %10s %10s\n", 
-            $name, $version, $obj->installed_version, $obj->version,
-            ($obj->is_uptodate( version => $version ) ? 'Yes' : 'No');
+    # list and/or install the prereqs
+    while ( my ( $name, $version ) = each %$href ) {
 
-        ### that is it, unless we need to install
+        # find the module or display msg no such module
+        my $obj = $cb->module_tree($name)
+          or print "Prerequisite '$name' was not found on CPAN\n" and next;
+
+        # display some info
+        printf "  %-30s %10s %10s %10s %10s\n",
+          $name, $version, $obj->installed_version, $obj->version,
+          ( $obj->is_uptodate( version => $version ) ? 'Yes' : 'No' );
+
+        # that is it, unless we need to install
         next unless $install;
-    
-        ### we already have this version or better installed
+
+        # we already have this version or better installed
         next if $obj->is_uptodate( version => $version );
-     
-        ### install it
-        $obj->install( %$opts );
+
+        # install it
+        $obj->install(%$opts);
     }
 
     return;
 }
 
-# sub _get_module {
-
-
 sub install_prereqs_help {
-    return "    /prereqs <cmd> [mod]  # Install missing prereqs for given module\n" .
-           "        <cmd>  =>  show|list|install\n".
-           "        [mod]      directory, module name or URL (defaults to .)\n";
+    return
+        "    /prereqs <cmd> [mod]  # Install missing prereqs for given module\n"
+      . "        <cmd>  =>  show|list|install\n"
+      . "        [mod]      directory, module name or URL (defaults to .)\n";
 
 }
 
@@ -144,7 +129,7 @@ CPANPLUS::Shell::Default::Plugin::Prereqs - Plugin for CPANPLUS to automate the 
 =head1 SYNOPSIS
 
   use CPANPLUS::Shell::Default::Plugin::Prereqs;
-  
+
   $ cpanp /prereqs <show|list|install> [Module|URL|dir]
 
 =head1 DESCRIPTION
@@ -210,7 +195,7 @@ Add test for MakeMaker and Module::Install based modules. Add test for
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2007 by mgrimes
+Copyright (C) 2007-12 by mgrimes
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.8 or,
