@@ -36,7 +36,7 @@ sub test_cmd {
 }
 
 ### Is the plugin listed
-test_cmd '/plugins', qr{/prereqs}, qr{^$}, 'Plugin listed';
+test_cmd '/plugins', qr{/prereqs}, qr{.*}, 'Plugin listed';
 
 ### Test a Build.PL module
 test_cmd '/prereqs show t/build1', qr{'stuff' was not found.*Hash::Util}s,
