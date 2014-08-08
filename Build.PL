@@ -8,9 +8,11 @@ my $build = Module::Build->new(
         'CPANPLUS'   => '0.77',
         'File::Spec' => 0,
     },
+    configure_requires => {
+        'Module::Build' => '0.36',
+    },
     build_requires => {
         'Test::More'            => 0,
-        'Module::Build'         => '0.36',
         'CPANPLUS::Dist::Build' => 0,
         'IO::CaptureOutput'     => '1.1102',
     },

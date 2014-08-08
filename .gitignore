@@ -1,23 +1,28 @@
 .*.swp
-.local-v*/
+.build
 
 META.yml
-META.json
+!META.json
 MYMETA.yml
 MYMETA.json
 blib/
 Build
 _build/
-.build
 pm_to_blib
-
+dist.ini
 MANIFEST
+AnyEvent-Filesys-Notify-*
 MANIFEST.bak
-CPANPLUS-Shell-Default-Plugins-Prereqs-*
-README
-Changes.bak
-
 exp/
+tmp/
+Changes.bak
+t/data
+nytprof*
+.local-v*
+README
+
+# podweaver backups
+*.pm.bak
 
 t/build1/Build
 t/build1/_build/
