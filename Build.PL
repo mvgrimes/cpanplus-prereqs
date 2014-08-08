@@ -4,6 +4,7 @@ my $build = Module::Build->new(
     license       => 'perl',
     create_readme => 1,
     requires      => {
+        'perl'       => '5.006',
         'CPANPLUS'   => '0.77',
         'File::Spec' => 0,
     },
