@@ -1,5 +1,12 @@
 Changes for CPANPLUS::Shell::Default::Plugins::Prereqs
 
+0.12 - Wed Mar  4 09:18:28 EST 2020
+    Fixes bug in tests
+    Adds minimum version of perl to the prereqs
+    Fixes Changes file to adhere to CPAN::Changes spec
+    ** I do not use CPANPLUS anymore. Anyone interested in taking it over is
+    welcome to it. **
+
 0.11 - Fri Aug  8 09:00:25 EDT 2014
     - Adds minimum version of perl to the prereqs
     - Fixes Changes file to adhere to CPAN::Changes spec

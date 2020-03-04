@@ -11,10 +11,11 @@ my $build = Module::Build->new(
     configure_requires => {
         'Module::Build' => '0.36',
     },
-    build_requires => {
+    test_requires => {
         'Test::More'            => 0,
         'CPANPLUS::Dist::Build' => 0,
         'IO::CaptureOutput'     => '1.1102',
+        'Perl6::Junction'       => 0,
     },
 );
 
