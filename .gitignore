@@ -34,3 +34,4 @@ t/inc1/Makefile
 t/mm1/MYMETA.json
 t/mm1/MYMETA.yml
 t/mm1/Makefile
+t.pl

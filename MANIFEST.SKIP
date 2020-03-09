@@ -16,6 +16,7 @@ weaver.ini
 exp/
 tmp/
 local/
+^t.pl$
 ^MYMETA\.json$
 
 ^t/build1/Build$
